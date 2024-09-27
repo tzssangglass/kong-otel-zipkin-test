@@ -1,0 +1,31 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        # max_request_body_size: 10
+        endpoint: "0.0.0.0:55681"
+
+processors:
+  batch:
+    # send_batch_size: 1
+    # timeout: 1s
+    # send_batch_max_size: 2
+    # metadata_cardinality_limit: 2
+
+
+exporters:
+  logging:
+
+  zipkin:
+    endpoint: "http://127.0.0.1:9411/api/v2/spans"
+    # sending_queue:
+    #   num_consumers: 1
+    #   queue_size: 5
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, zipkin]

@@ -1,0 +1,19 @@
+_format_version: "3.0"
+services:
+- name: backend
+  host: 127.0.0.1
+  port: 5000
+  routes:
+    - name: flask
+      paths:
+      - /flask
+      strip_path: true
+  plugins:
+  - name: zipkin
+    config:
+      sample_ratio: 0
+      http_endpoint: http://localhost:55681/v1/traces
+      propagation: 
+        extract: ["w3c"]
+        inject: ["preserve"]
+        default_format: "w3c"

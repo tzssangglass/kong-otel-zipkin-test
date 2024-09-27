@@ -1,0 +1,28 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: opentelemetry-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    network_mode: host
+    volumes:
+      - ./otel-config.yaml:/etc/otel-collector-config.yaml
+
+  # Zipkin
+  zipkin-all-in-one:
+    container_name: zipkin
+    image: openzipkin/zipkin:latest
+    restart: always
+    network_mode: host
+
+  kong-dbless:
+    image: kong/kong-gateway:3.7.1.2
+    container_name: kong-dbless
+    network_mode: host
+    restart: on-failure
+    environment:
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_LICENSE_DATA: ${KONG_LICENSE_DATA}
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+    volumes:
+      - './config:/usr/local/kong/declarative:ro'
